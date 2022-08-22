@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -16,16 +17,18 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
-//    new Student(
-//                        1L,
-//                                "Davi Silva",
-//                                "davisilvaphoto@gmail.com",
-//                        LocalDate.of(1985, Month.NOVEMBER, 3),
-//                        36
-//                                )
-
     @GetMapping
     public List<Student> getStudents() {
         return studentRepository.findAll();
+    }
+
+    public void addNewStudent(Student student) {
+        Optional<Student> studentOptional= studentRepository.findStudentByEmail(student.getEmail());
+
+        if(studentOptional.isPresent()) {
+            throw new IllegalStateException("email taken");
+        }
+
+        studentRepository.save(student);
     }
 }
